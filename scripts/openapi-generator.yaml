@@ -1,0 +1,8 @@
+invokerPackage: "Tippiti\\Api\\Generated"
+packageName: "Tippiti"
+composerPackageName: "tippiti/api-client"
+srcBasePath: "."
+licenseName: "MIT"
+gitUserId: "tippiti"
+gitRepoId: "tippiti-php"
+hideGenerationTimestamp: true

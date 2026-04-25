@@ -1,0 +1,10 @@
+.DS_Store
+vendor/
+composer.lock
+node_modules/
+*.log
+.idea/
+.vscode/
+.env
+.env.local
+.phpunit.result.cache

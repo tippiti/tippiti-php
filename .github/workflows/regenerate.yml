@@ -1,0 +1,57 @@
+name: Regenerate client from latest specification
+
+on:
+  schedule:
+    - cron: '0 7 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  regenerate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          coverage: none
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Install PHP dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: Regenerate client
+        run: composer run generate
+
+      - name: Detect changes
+        id: diff
+        run: |
+          if git diff --quiet src/Generated; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Commit regenerated client
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          git config user.name "tippiti-bot"
+          git config user.email "bot@tippiti.io"
+          git add src/Generated
+          git commit -m "Regenerate client from latest specification"
+          git push
